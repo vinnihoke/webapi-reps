@@ -40,20 +40,21 @@ router.get("/:id/posts", validateUserId, async (req, res) => {
   }
 });
 
-// Not Working
+// Working
 router.post("/", validateUser, async (req, res) => {
-  console.log(req.body.name);
+  console.log(req.body);
   try {
-    const newUser = await Users.insert(req.body.name);
+    const newUser = await Users.insert(req.body);
     res.status(201).json({ message: "Successfully added user", newUser });
   } catch (error) {
     res.status(500).json({ error });
   }
 });
 
-// Not Working
+// Working
 router.post("/:id/posts", validatePost, validateUserId, async (req, res) => {
-  const postInfo = { ...req.body, post_id: req.params.id };
+  const postInfo = req.body;
+  postInfo.user_id = req.params.id;
   try {
     const post = await Posts.insert(postInfo);
     res.status(200).json(post);
@@ -62,6 +63,7 @@ router.post("/:id/posts", validatePost, validateUserId, async (req, res) => {
   }
 });
 
+// Working
 router.delete("/:id", validateUserId, async (req, res) => {
   try {
     const deleted = await Users.remove(req.params.id);
@@ -71,18 +73,21 @@ router.delete("/:id", validateUserId, async (req, res) => {
   }
 });
 
+// Not working
 router.put("/:id", validateUser, validateUserId, async (req, res) => {
+  const updated = req.body;
   const { id } = req.params;
-  const userInfo = req.body;
   try {
-    const update = await Users.update(id, userInfo);
-    res.status(204).json({ message: "User updated", update });
+    const update = await Users.update(id, updated);
+    res.status(200).json({ message: "User updated", update });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ error: error });
   }
 });
 
 //Custom middleware
+
+// Working
 function validateUserId(req, res, next) {
   const { id } = req.params;
   Users.getById(id)
@@ -100,7 +105,9 @@ function validateUserId(req, res, next) {
     });
 }
 
+// Not Working
 function validateUser(req, res, next) {
+  console.log(req.body);
   // If user exists in req.body
   if (!req.body) {
     // Req.body is missing ? res.status(400).json({ message: "Missing post data" })
@@ -114,6 +121,7 @@ function validateUser(req, res, next) {
   }
 }
 
+// Not Working
 function validatePost(req, res, next) {
   // If post exists in req.body
   if (!req.body) {
@@ -123,6 +131,7 @@ function validatePost(req, res, next) {
     // Req.body is missing the text field ? res.status(400).json({ message: "Missing required text field" })
     res.status(400).json({ message: "Missing required text field" });
   } else {
+    // This is the truthy component
     next();
   }
 }
