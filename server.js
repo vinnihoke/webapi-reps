@@ -7,9 +7,9 @@ const postRouter = require("./posts/postRouter.js");
 const server = express();
 
 // Install some middleware here.
-// server.use(helmet());
-// server.use(logger);
-// server.use(morgan("dev"));
+server.use(helmet());
+server.use(logger);
+server.use(morgan("dev"));
 server.use("/api/users", userRouter);
 server.use("/api/users/:id/posts", postRouter);
 

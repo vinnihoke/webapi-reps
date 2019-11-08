@@ -4,6 +4,7 @@ const Posts = require("../posts/postDb.js");
 
 const router = express.Router();
 
+// Working
 router.get("/", (req, res) => {
   Users.get(req.query)
     .then(users => {
@@ -14,6 +15,7 @@ router.get("/", (req, res) => {
     });
 });
 
+// Working
 router.get("/:id", validateUserId, (req, res) => {
   Users.getById(req.params.id).then(user => {
     if (user) {
@@ -24,6 +26,7 @@ router.get("/:id", validateUserId, (req, res) => {
   });
 });
 
+// Working
 router.get("/:id/posts", validateUserId, async (req, res) => {
   try {
     const posts = await Users.getUserPosts(req.params.id);
@@ -32,21 +35,23 @@ router.get("/:id/posts", validateUserId, async (req, res) => {
     } else {
       res.status(404).json({ message: "There are no posts" });
     }
-  } catch (err) {
-    res.status(500).json({ error: err });
+  } catch (error) {
+    res.status(500).json({ error });
   }
 });
 
-router.post("/", validatePost, (req, res) => {
-  Users.insert(req.body)
-    .then(post => {
-      res.status(201).json(post);
-    })
-    .catch(err => {
-      res.status(500).json({ error: err });
-    });
+// Not Working
+router.post("/", validateUser, async (req, res) => {
+  console.log(req.body.name);
+  try {
+    const newUser = await Users.insert(req.body.name);
+    res.status(201).json({ message: "Successfully added user", newUser });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 });
 
+// Not Working
 router.post("/:id/posts", validatePost, validateUserId, async (req, res) => {
   const postInfo = { ...req.body, post_id: req.params.id };
   try {
@@ -59,10 +64,10 @@ router.post("/:id/posts", validatePost, validateUserId, async (req, res) => {
 
 router.delete("/:id", validateUserId, async (req, res) => {
   try {
-    const deleted = await Users.remove(id);
-    res.status(200).json({ deleted });
+    const deleted = await Users.remove(req.params.id);
+    res.status(200).json({ boolean: deleted });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ error: error });
   }
 });
 
