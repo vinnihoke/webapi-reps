@@ -1,4 +1,4 @@
-const express = "express";
+const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const userRouter = require("./users/userRouter.js");
@@ -7,8 +7,9 @@ const postRouter = require("./posts/postRouter.js");
 const server = express();
 
 // Install some middleware here.
-server.use(logger);
-
+// server.use(helmet());
+// server.use(logger);
+// server.use(morgan("dev"));
 server.use("/api/users", userRouter);
 server.use("/api/users/:id/posts", postRouter);
 

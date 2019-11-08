@@ -1,4 +1,4 @@
-const express = "express";
+const express = require("express");
 const Posts = require("./postDb.js");
 
 const router = express.Router();
@@ -19,7 +19,7 @@ router.get("/:id", validatePostId, (req, res) => {
 });
 
 router.delete("/:id", validatePostId, (req, res) => {
-  Posts.remove(req.params.id);
+  Posts.remove(req.params.id).then();
   res.status(204).json({ message: "Successfully deleted" });
 });
 
